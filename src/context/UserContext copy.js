@@ -32,47 +32,44 @@ const configureGoogleSign = (dispatch) => async () => {
 
 
 
+const setUser = (dispatch) => async () => {
+	// const userInfo = await GoogleSignin.signIn();
 
-const createUserDb = (user) => {
-	refUser
-		.where('id', '==', user.user.id)
-		.get()
-		.then(querySnapshot => {
-			if (querySnapshot.empty) {
-				console.log('No esta registrado')
-				user.user.typeUser = 'user'
-				addUser(user.user)
-				return user.user;
-			} else {
-				console.log('Si esta registrado')
-				console.log('Tipo de usuario', querySnapshot.docs[0].data().typeUser)
-				return querySnapshot.docs[0].data();
-			}
-		});
+	// var query = refUser.where("id", "==", userInfo.user.id);
+	// console.log('hhhh', userInfo.user.id)
+	// console.log('hhhh', query)
+	console.log('QUERY')
+	// refUser.where("id", "==", userInfo.user.id).get().then((querySnapshot) => {
+	// 	querySnapshot.forEach((doc) => {
+	// 		// doc.data() is never undefined for query doc snapshots
+	// 		console.log('DOCS', doc.id, " => ", doc.data());
+	// 	});
+	// })
+	// 	.catch((error) => {
+	// 		console.log("Error getting documents: ", error);
+	// 	});
 
-	const addUser = (user) => {
-		refUser.add(user)
-			.then(() => {
-				console.log('User added!');
-			});
-
-	}
 
 }
 
 
 
 const signIn = (dispatch) => async () => {
+	console.log('Hola')
+
+	
+
 	try {
 		await GoogleSignin.hasPlayServices();
 		const userInfo = await GoogleSignin.signIn();
 		const isLoggedIn = true
 		const typeUser = 'admin'
-		// const typeUser = userInfo.typeUser
 
-		const us = createUserDb(userInfo)
-		console.log('object', us)
 
+
+
+
+		
 		dispatch({
 			type: 'SIGNIN',
 			payload: userInfo,
@@ -165,7 +162,7 @@ export const { UserProvider, UserContext } = CreateUserContext(
 		configureGoogleSign,
 		signIn,
 		signOut,
-		// setUser
+		setUser
 	},
 	{
 		GoogleSignconfigured: false,

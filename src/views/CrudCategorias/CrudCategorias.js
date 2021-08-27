@@ -1,17 +1,25 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Alert, InteractionManager } from "react-native";
 
 import { ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CategoriesContext } from '../../context/CategoriesContext'
 
 import CustomButtons from '../../components/Buttons/CustomButtons'
+import LoadingScreens from '../../components/LoadingScreens/LoadingScreens'
 
-
-export default function CrudCategorias({ navigation }) {
-
+export default function CrudCategorias() {
   const { categoriesState, deleteCategory, deleteDimension } = useContext(CategoriesContext);
   const { categories, dimensions } = categoriesState;
+
+  const [interactionsComplete, setInteractionsComplete] = useState(false)
+
+  useEffect(() => {
+    InteractionManager.runAfterInteractions(() => {
+      setInteractionsComplete(true)
+    });
+
+  }, [])
 
   const listItemsCat = categories.map((obj) => {
     obj.type = 'cat'
@@ -28,12 +36,12 @@ export default function CrudCategorias({ navigation }) {
           route="UpdateCategoriaModal"
           data={obj}
         />
-        <CustomButtons
+        {/* <CustomButtons
           icon="trash"
           type="icon"
           iconColor="black"
           func={() => alertDeleteCat(obj.id)}
-        />
+        /> */}
       </ListItem>
     )
   }
@@ -54,12 +62,12 @@ export default function CrudCategorias({ navigation }) {
           route="UpdateCategoriaModal"
           data={obj}
         />
-        <CustomButtons
+        {/* <CustomButtons
           icon="trash"
           type="icon"
           iconColor="black"
           func={() => alertDeleteDim(obj.id)}
-        />
+        /> */}
       </ListItem>
     )
   }
@@ -103,7 +111,6 @@ export default function CrudCategorias({ navigation }) {
         flex: 1,
       }}
     >
-
       <View style={styles.contentButtons}>
         <CustomButtons
           icon="plus"
@@ -111,17 +118,19 @@ export default function CrudCategorias({ navigation }) {
           theme="main"
           name="Crear categoria / Dimension  "
         />
-
       </View>
 
-      <ScrollView>
-        <Text h3>Categorias</Text>
-        {listItemsCat}
-        <Text h3>Dimensiones</Text>
-        {listItemsDim}
-      </ScrollView>
-
-
+      {interactionsComplete ? (
+        <ScrollView>
+          <Text h3>Categorias</Text>
+          {listItemsCat}
+          <Text h3>Dimensiones</Text>
+          {listItemsDim}
+        </ScrollView>
+      ) : (
+          // <Text>Loading</Text>
+          <LoadingScreens/>
+        )}
     </View>
   );
 

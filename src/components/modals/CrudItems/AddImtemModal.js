@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Modal,
   StyleSheet,
@@ -6,21 +6,52 @@ import {
   TextInput,
   ScrollView
 } from "react-native";
-import { Button, Input, Text, ListItem, Overlay } from 'react-native-elements';
+import { Button, Input, Text, ListItem } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Picker } from '@react-native-picker/picker';
 import { ThemeContext } from 'react-native-elements';
+import { CategoriesContext } from '../../../context/CategoriesContext'
+import CustomSelect from '../../CustomSelect/CustomSelect'
 
 
 export default function AddImtemModal({ navigation }) {
   const [textInput, setTextInput] = useState('');
   const { theme } = useContext(ThemeContext);
 
-  const [selectOption, setSelectOption] = useState('Selecciona una opcion')
+  const { categoriesState } = useContext(CategoriesContext);
+  const { categories, dimensions } = categoriesState;
 
-  const toggleOverlay = () => {
-    setVisible(!visible);
-  };
+  //cat Selected
+  const [catSelectedOpt, setCatSelectedOpt] = useState({})
+  //dim Selected
+  const [DimSelectedOpt, setDimSelectedOpt] = useState({})
+  const [clearDimOpt, setClearDimOpt] = useState(true)
+
+  //Tuberia
+  const [tuberiaSettings, setTuberiaSettings] = useState({
+    long: '6',
+    measure: 'Mts'
+  })
+
+
+
+  useEffect(() => {
+    console.log('selected ', catSelectedOpt)
+    console.log('selected Dim ', DimSelectedOpt)
+  }, [catSelectedOpt, DimSelectedOpt])
+
+
+  //selected cat from child
+  function setCatFromChild(data) {
+    setCatSelectedOpt(data)
+  }
+  //selected dim from child
+  function setDimFromChild(data) {
+    setDimSelectedOpt(data)
+    setClearDimOpt(true)
+  }
+  function clearOptDim() {
+    setClearDimOpt(false)
+  }
 
   return (
 
@@ -38,60 +69,57 @@ export default function AddImtemModal({ navigation }) {
 
             <Text style={styles.modalText} h3>Agregar Producto</Text>
 
+            {/* SELECT Categories */}
+            <Text style={{ fontSize: 20 }}>Categoria</Text>
+            <CustomSelect data={categories} parentFunction={setCatFromChild} />
+
             <Input
               placeholder="Nombre"
               leftIcon={{ type: 'font-awesome', name: 'list-alt' }}
               onChangeText={value => setTextInput(value)}
             />
-
             <Input
               placeholder="Precio"
               leftIcon={{ type: 'font-awesome', name: 'list-alt' }}
               onChangeText={value => setTextInput(value)}
+              keyboardType={'numeric'}
             />
 
-            <Text style={{ fontSize: 20 }}>Categoria</Text>
+            {/* SELECT Dim */}
+            <Text style={{ fontSize: 20 }}>Dimension</Text>
+            <CustomSelect data={dimensions} parentFunction={setDimFromChild} onSelectOpt={DimSelectedOpt} />
+            <Button buttonStyle={{ backgroundColor: theme.colors.btnAction }}
+              onPress={() => clearOptDim()} title='  X  ' />
 
-            <ListItem>
-              <ListItem.Content style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                <Icon
-                  reverse
-                  name='list-alt'
-                  color='#000000'
-                  size={30}
-                  containerStyle={{
-                    margin: 20
-                  }}
-                />
-                <Picker
-                  selectedValue={selectOption}
-                  style={{ width: 200 }}
-                  onValueChange={(itemValue, itemIndex) =>
-                    setSelectOption(itemValue)
-                  }>
-                  <Picker.Item label={selectOption} value="Hola" />
-                  <Picker.Item label="Java" value="java" />
-                  <Picker.Item label="JavaScript" value="js" />
-                </Picker>
-              </ListItem.Content>
-            </ListItem>
+
+
 
             <Text style={{ fontSize: 20 }}>Medidas</Text>
-
             <ListItem>
               <ListItem.Content>
                 <Input
                   placeholder="Longitud (MTS/CMS)"
+                  value={tuberiaSettings.long}
                   leftIcon={{ type: 'font-awesome', name: 'list-alt' }}
-                  onChangeText={value => setTextInput(value)}
+                  onChangeText={value => setTuberiaSettings({ ...tuberiaSettings, long: value })}
                   keyboardType={'number-pad'}
                   maxLength={3}
                   textAlign={'center'}
                 />
               </ListItem.Content>
-              <Button buttonStyle={{ backgroundColor: theme.colors.btnAction }}
-                onPress={() => navigation.goBack()} title="Mts" />
             </ListItem>
+            <View style={styles.contentButtonsItems}>
+              <Button buttonStyle={{ backgroundColor: theme.colors.btnAction }}
+                onPress={() => {
+                  if (tuberiaSettings.measure == 'Mts') { setTuberiaSettings({ ...tuberiaSettings, measure: 'Cms' }) }
+                  else { setTuberiaSettings({ ...tuberiaSettings, measure: 'Mts' }) }
+                }} title={tuberiaSettings.measure} />
+              <Button buttonStyle={{ backgroundColor: theme.colors.btnAction }}
+                onPress={() => {
+                  if (tuberiaSettings.measure == 'Mts') { setTuberiaSettings({ ...tuberiaSettings, measure: 'Cms' }) }
+                  else { setTuberiaSettings({ ...tuberiaSettings, measure: 'Mts' }) }
+                }} title='  X  ' />
+            </View>
 
             <View>
               <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -140,33 +168,21 @@ export default function AddImtemModal({ navigation }) {
 
 }
 
-
-
-
-
 const styles = StyleSheet.create({
   contentButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  contentButtonsItems: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: -30,
+    marginBottom: 10
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     padding: 30
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    // borderRadius: 20,
-    padding: 35,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
   },
   modalText: {
     marginBottom: 15,

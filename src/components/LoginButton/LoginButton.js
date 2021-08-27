@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button, Pressable } from 'react-native'
 
 import { UserContext } from '../../context/UserContext'
 
@@ -12,22 +12,33 @@ export default function LoginButton() {
 
     const { userState, signIn, signOut } = useContext(UserContext);
     const { isLoggedIn, userInfo } = userState;
-    console.log('Estado del usuario: ', isLoggedIn)
-    console.log('Info del usuario: ', userInfo)
+    // console.log('Estado del usuario: ', isLoggedIn)
+    // console.log('Info del usuario: ', userInfo)
 
     function buttonsValidation() {
         if (isLoggedIn) {
             return (
-                <Button onPress={signOut} title='Sign out' color='#332211' />
+                <View>
+                    {/* <Button onPress={signOut} title='Sign out' color='#332211' /> */}
+                    <Pressable style={styles.logoutBtnContainer} onPress={signOut}>
+                        <Text style={styles.logoutBtnText}>Cerrar sesion</Text>
+                    </Pressable>
+                </View>
             )
         } else {
             return (
-                <GoogleSigninButton
-                    style={styles.signInButton}
-                    size={GoogleSigninButton.Size.Wide}
-                    color={GoogleSigninButton.Color.Dark}
-                    onPress={signIn}
-                />
+                <View>
+                    <GoogleSigninButton
+                        style={styles.signInButton}
+                        size={GoogleSigninButton.Size.Wide}
+                        color={GoogleSigninButton.Color.Dark}
+                        onPress={signIn}
+                    />
+                    {/* <Pressable style={styles.logoutBtnContainer} onPress={signOut}>
+                        <Text style={styles.logoutBtnText}>Cerrar sesion</Text>
+                    </Pressable> */}
+                </View>
+
             )
         }
     }
@@ -47,7 +58,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     signInButton: {
-        width: 200,
+        width: '100%',
         height: 50
     },
     status: {
@@ -73,5 +84,25 @@ const styles = StyleSheet.create({
     displayTitle: {
         fontSize: 22,
         color: '#010101'
+    },
+    logoutBtnContainer: {
+        width: '100%',
+        display: 'flex',
+        alignSelf: 'center'
+    },
+
+    logoutBtnText: {
+        color: '#000E2E',
+        textTransform: 'uppercase',
+        fontSize: 30,
+        fontWeight: 'bold',
+        borderBottomWidth: 1,
+        paddingBottom: 8,
+        textAlign: 'center',
+        borderBottomColor:'#000E2E',
+
+
+
+
     }
 });

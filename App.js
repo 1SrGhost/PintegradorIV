@@ -28,7 +28,6 @@ import IndexApp from './src/views/IndexApp/IndexApp'
 import { ThemeProvider } from 'react-native-elements';
 import { ThemeConf } from './src/utils/ThemeConf'
 
-
 export default function App() {
 
   useEffect(() => {
@@ -40,7 +39,7 @@ export default function App() {
       <ThemeProvider theme={ThemeConf}>
         <UserProvider>
           <CategoriesProvider>
-            <StatusBar barStyle="dark-content" />
+            <StatusBar barStyle="light-content" />
             <IndexApp />
           </CategoriesProvider>
         </UserProvider>
